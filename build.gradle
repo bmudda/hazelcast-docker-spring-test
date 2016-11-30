@@ -37,13 +37,8 @@ dependencies {
 
     compile group: 'com.hazelcast', name: 'hazelcast', version:'3.7.3'
     
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.2.5.RELEASE'){
-    	exclude(module: 'hazelcast')
-    }
-    
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.2.5.RELEASE'){
-    	exclude(module: 'hazelcast')
-    }
+    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.2.5.RELEASE')
+    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.2.5.RELEASE')
     
     //compile (group: 'org.bitsofinfo', name: 'hazelcast-consul-discovery-spi', version:'1.0-RC6'){
     //	exclude(module: 'hazelcast')
@@ -68,7 +63,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
 	manifest {
-        attributes 'Implementation-Title': 'Hazelcast Docker Test',
+        attributes 'Implementation-Title': 'Hazelcast Docker SpringBoot Test',
         	'Implementation-Version': 1.0,
         	'Main-Class': 'ccom.bmudda.util.boot.Application'
     }

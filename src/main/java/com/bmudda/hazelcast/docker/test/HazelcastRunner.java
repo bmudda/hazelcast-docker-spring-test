@@ -15,21 +15,6 @@ import com.hazelcast.nio.Address;
  */
 public class HazelcastRunner {
 	
-//	public static void main(String[] args) throws Exception {
-//		
-//		HazelcastInstanceMgr mgr = (new HazelcastRunner()).new HazelcastInstanceMgr();
-//		mgr.start();
-//		
-//		// Sleep for two hours
-//		Thread.currentThread();
-//		Thread.sleep(7200000);
-//		
-//		
-//		// shutdown everything
-//		mgr.shutdown();
-//		
-//		System.exit(0);
-//	}
 	private String hazelcastConfigPath = null;
 	private HazelcastInstance hazelcastInstance = null;
 	private static final String INSTANCE_NAME = "DOCKER_HAZELCAST";
