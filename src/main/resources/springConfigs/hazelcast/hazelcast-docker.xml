@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast id="hazelcast-consul-docker" 
+			xmlns="http://www.hazelcast.com/schema/config" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.7.xsd">
+  <group>
+    <name>hazelcast-docker-test</name>
+    <password>haz3lcast1</password>
+  </group>
+  <properties>
+    <!-- <property name="hazelcast.discovery.enabled">false</property> -->
+    <property name="hazelcast.discovery.enabled">true</property>
+    <property name="hazelcast.shutdownhook.enabled">false</property>
+    <property name="hazelcast.socket.server.bind.any">false</property>
+    <property name="hazelcast.logging.type">jdk</property>
+  </properties>
+  <network>
+    <port auto-increment="true">5701</port>
+    <join>
+      <multicast enabled="false"/>
+      <aws enabled="false"/>
+      <!--  <tcp-ip enabled="true"><member>10.29.29.227:40001</member><member>10.29.29.227:40002</member></tcp-ip>-->
+      <tcp-ip enabled="false"/>
+      <discovery-strategies>
+        <discovery-strategy class="org.bitsofinfo.hazelcast.discovery.consul.ConsulDiscoveryStrategy" enabled="true">
+          <properties>
+            <property name="consul-host">10.29.29.227</property>
+            <property name="consul-port">8500</property>
+            <property name="consul-service-name">hz-discovery-test-cluster</property>
+            <property name="consul-healthy-only">true</property>
+            <property name="consul-service-tags">hazelcast,test1</property>
+            <property name="consul-discovery-delay-ms">10000</property>
+            <property name="consul-registrator">org.bitsofinfo.hazelcast.discovery.consul.ExplicitIpPortRegistrator</property>
+            <property name="consul-registrator-config"><![CDATA[
+                                                          {
+                                                            "registerWithIpAddress":"10.29.29.227",
+                                                            "registerWithPort":5701, 
+                                                            "healthCheckProvider":"org.bitsofinfo.hazelcast.discovery.consul.ScriptHealthCheckBuilder",
+                                                            "healthCheckScript":"exec 6<>/dev/tcp/#MYIP/#MYPORT || (exit 3)",
+                                                            "healthCheckScriptIntervalSeconds":30,
+                                                            "healthCheckHttp":"http://#MYIP:80",
+                                                            "healthCheckHttpIntervalSeconds":30,
+                                                            "healthCheckTcp":"#MYIP:#MYPORT",
+                                                            "healthCheckTcpIntervalSeconds":30
+                                                          }
+                                                        ]]></property>
+          </properties>
+        </discovery-strategy>
+      </discovery-strategies>
+    </join>
+  </network>
+</hazelcast>

@@ -1,0 +1,125 @@
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.DockerRegistryCredentials
+
+buildscript {
+	repositories {
+    	jcenter()
+    	maven { url "http://repo.spring.io/snapshot" }
+        maven { url "http://repo.spring.io/milestone" }
+    }
+    dependencies {
+    	classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+        classpath("com.bmuschko:gradle-docker-plugin:3.0.1")
+    }
+
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.14'
+}
+
+group = 'com.bmudda'
+
+allprojects {
+	repositories {
+		jcenter()
+	}
+	apply plugin: 'maven'
+	apply plugin: 'java'
+	apply plugin: 'com.bmuschko.docker-remote-api'
+	apply plugin: 'spring-boot'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+
+    compile group: 'com.hazelcast', name: 'hazelcast', version:'3.7.3'
+    
+    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.2.5.RELEASE'){
+    	exclude(module: 'hazelcast')
+    }
+    
+    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.2.5.RELEASE'){
+    	exclude(module: 'hazelcast')
+    }
+    
+    //compile (group: 'org.bitsofinfo', name: 'hazelcast-consul-discovery-spi', version:'1.0-RC6'){
+    //	exclude(module: 'hazelcast')
+    //}
+    
+    //compile (group: 'org.bitsofinfo', name: 'docker-discovery-registrator-consul', version:'1.0-RC1'){
+    //	exclude(module: 'hazelcast')
+    //}
+    
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    
+    //compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
+  	//compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+  	
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+	manifest {
+        attributes 'Implementation-Title': 'Hazelcast Docker Test',
+        	'Implementation-Version': 1.0,
+        	'Main-Class': 'ccom.bmudda.util.boot.Application'
+    }
+    baseName = project.name + '-all'
+    from {
+    	configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  	}
+    with jar
+}
+
+task buildDockerImage(type: DockerBuildImage) {
+  
+  dependsOn build
+  inputDir = project.projectDir
+  dockerFile = project.file('Dockerfile')
+  if (project.hasProperty("imageTag")) {
+    tag = project.name+":"+project.imageTag
+  } else {
+    tag = project.name+":"+project.version
+  }
+
+}
+
+task buildTagDockerImage(type: DockerTagImage) {
+    dependsOn buildDockerImage
+    targetImageId { buildDockerImage.getImageId() }
+
+    repository = project.name
+    
+    if (project.hasProperty("imageTag")) {
+      tag = project.imageTag
+    }
+
+}
+
+sourceSets {
+    main.java.srcDir "src/main/java"
+}
+
+jar {
+  manifest { 
+    attributes (
+      "Main-Class": "com.bmudda.util.boot.Application"
+      )
+  }  
+
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
+
+artifacts {
+    archives sourcesJar
+}
