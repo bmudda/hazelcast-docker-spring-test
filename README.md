@@ -24,7 +24,7 @@ This is release candidate code, tested against Hazelcast 3.7+ releases.
 
 ## <a id="building"></a>Building from source
 
-* From the root of this project, build a Jar : `./gradlew build`
+* From the root of this project, build a Jar : `./gradlew build- -refresh-dependencies -x test`
 
 ## <a id="usage"></a>Usage
 * Locate the tcp-ip section in hazelcast.xml file located in the docs folder, copy it to a desired location and adjust the member IP addresses to your need
@@ -32,4 +32,4 @@ This is release candidate code, tested against Hazelcast 3.7+ releases.
 <member>127.0.0.1:5701</member>
 <member>127.0.0.1:5702</member>
 ```
-* Run the jar file from the root of this project folder `java -jar build/libs/hazelcast-docker-spring-test-1.0-RC1.jar` from inside your root project
+* Run the jar file from the root of this project folder `java -jar build/libs/hazelcast-docker-spring-test-1.0-RC1.jar —debug` from inside your root project
