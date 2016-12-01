@@ -8,8 +8,8 @@
     <password>haz3lcast1</password>
   </group>
   <properties>
-    <!-- <property name="hazelcast.discovery.enabled">false</property> -->
-    <property name="hazelcast.discovery.enabled">true</property>
+    <!-- <property name="hazelcast.discovery.enabled">true</property> -->
+    <property name="hazelcast.discovery.enabled">false</property>
     <property name="hazelcast.shutdownhook.enabled">false</property>
     <property name="hazelcast.socket.server.bind.any">false</property>
     <property name="hazelcast.logging.type">jdk</property>
@@ -19,12 +19,12 @@
     <join>
       <multicast enabled="false"/>
       <aws enabled="false"/>
-      <!--  <tcp-ip enabled="true"><member>10.29.29.227:40001</member><member>10.29.29.227:40002</member></tcp-ip>-->
-      <tcp-ip enabled="false"/>
-      <discovery-strategies>
-        <discovery-strategy class="org.bitsofinfo.hazelcast.discovery.consul.ConsulDiscoveryStrategy" enabled="true">
+       <tcp-ip enabled="true"><member>127.0.0.1:5701</member></tcp-ip>
+      <!-- <tcp-ip enabled="false"/> -->
+ <!--      <discovery-strategies>
+        <discovery-strategy class="org.bitsofinfo.hazelcast.discovery.consul.ConsulDiscoveryStrategy" enabled="false">
           <properties>
-            <property name="consul-host">10.29.29.227</property>
+            <property name="consul-host">127.0.0.1</property>
             <property name="consul-port">8500</property>
             <property name="consul-service-name">hz-discovery-test-cluster</property>
             <property name="consul-healthy-only">true</property>
@@ -33,7 +33,7 @@
             <property name="consul-registrator">org.bitsofinfo.hazelcast.discovery.consul.ExplicitIpPortRegistrator</property>
             <property name="consul-registrator-config"><![CDATA[
                                                           {
-                                                            "registerWithIpAddress":"10.29.29.227",
+                                                            "registerWithIpAddress":"127.0.0.1",
                                                             "registerWithPort":5701, 
                                                             "healthCheckProvider":"org.bitsofinfo.hazelcast.discovery.consul.ScriptHealthCheckBuilder",
                                                             "healthCheckScript":"exec 6<>/dev/tcp/#MYIP/#MYPORT || (exit 3)",
@@ -46,7 +46,7 @@
                                                         ]]></property>
           </properties>
         </discovery-strategy>
-      </discovery-strategies>
+      </discovery-strategies> -->
     </join>
   </network>
 </hazelcast>

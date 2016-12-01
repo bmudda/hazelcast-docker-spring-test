@@ -8,7 +8,7 @@ buildscript {
         maven { url "http://repo.spring.io/milestone" }
     }
     dependencies {
-    	classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    	classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
         classpath("com.bmuschko:gradle-docker-plugin:3.0.1")
     }
 
@@ -27,7 +27,7 @@ allprojects {
 	apply plugin: 'maven'
 	apply plugin: 'java'
 	apply plugin: 'com.bmuschko.docker-remote-api'
-	apply plugin: 'spring-boot'
+	apply plugin: 'org.springframework.boot'
 }
 
 sourceCompatibility = 1.8
@@ -37,8 +37,9 @@ dependencies {
 
     compile group: 'com.hazelcast', name: 'hazelcast', version:'3.7.3'
     
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.2.5.RELEASE')
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.2.5.RELEASE')
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.4.2.RELEASE'){
+    	exclude(module: 'hazelcast')
+    }
     
     //compile (group: 'org.bitsofinfo', name: 'hazelcast-consul-discovery-spi', version:'1.0-RC6'){
     //	exclude(module: 'hazelcast')

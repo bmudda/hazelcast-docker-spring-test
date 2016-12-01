@@ -1,10 +1,12 @@
 package com.bmudda.hazelcast.docker.test;
 
+import org.slf4j.Logger;
+
 import com.hazelcast.config.ClasspathXmlConfig;
 import com.hazelcast.config.Config;
+import com.hazelcast.core.DuplicateInstanceNameException;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.nio.Address;
 
 /**
  * 
@@ -20,40 +22,63 @@ public class HazelcastRunner {
 	private static final String INSTANCE_NAME = "DOCKER_HAZELCAST";
 	private Config conf = null;
 	
+	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HazelcastRunner.class);
 	
 	public HazelcastRunner(String hazelcastConfigPath) throws Exception {
 		
-		this.hazelcastConfigPath = hazelcastConfigPath;
-		Thread.currentThread().setContextClassLoader(HazelcastInstance.class.getClassLoader());
-//		this.conf =new ClasspathXmlConfig(this.getClass().getClassLoader(), this.hazelcastConfigPath);
-		this.conf = new ClasspathXmlConfig(this.hazelcastConfigPath);
-		//this.conf.setClassLoader();
-		this.conf.setInstanceName(INSTANCE_NAME);
 		
-		this.hazelcastInstance = Hazelcast.newHazelcastInstance(conf);
+		try {
+			this.hazelcastConfigPath = hazelcastConfigPath;
+			
+			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+			Thread.currentThread().setContextClassLoader(HazelcastInstance.class.getClassLoader());
+	//		this.conf =new ClasspathXmlConfig(this.getClass().getClassLoader(), this.hazelcastConfigPath);
+			this.conf = new ClasspathXmlConfig(this.hazelcastConfigPath);
+			//this.conf.setClassLoader();
+			this.conf.setInstanceName(INSTANCE_NAME);
+			
+			this.hazelcastInstance = Hazelcast.newHazelcastInstance(conf);
+			
+			Thread.currentThread().setContextClassLoader(tccl);
+			
+			// Sleep for two hours
+			//Thread.currentThread();
+			//Thread.sleep(7200000);
+					
+			this.hazelcastInstance.shutdown();
+			
+			/*
+			
+			HazelcastInstanceMgr mgr = new HazelcastInstanceMgr(hazelCastConfigPath);
+			mgr.start();
+			
+			// Sleep for two hours
+			Thread.currentThread();
+			Thread.sleep(7200000);
+			
+			
+			// shutdown everything
+			mgr.shutdown();
+			
+			*/
+			
+			//System.exit(0);
 		
-		// Sleep for two hours
-		//Thread.currentThread();
-		//Thread.sleep(7200000);
+		} catch(DuplicateInstanceNameException e) {
 				
-		this.hazelcastInstance.shutdown();
-		
-		/*
-		
-		HazelcastInstanceMgr mgr = new HazelcastInstanceMgr(hazelCastConfigPath);
-		mgr.start();
-		
-		// Sleep for two hours
-		Thread.currentThread();
-		Thread.sleep(7200000);
-		
-		
-		// shutdown everything
-		mgr.shutdown();
-		
-		*/
-		
-		System.exit(0);
+				if (e.getMessage() != null && ( 
+						e.getMessage().toLowerCase().indexOf("hazelcast instance is already initialized") != -1 ||
+						(e.getMessage().toLowerCase().indexOf("hazelcastinstance with name") != -1 && e.getMessage().toLowerCase().indexOf("already exists") != -1)
+						)) {
+						
+					logger.info("HazelcastRunner() got an already initialized " +
+							"message when trying to init Hazelcast from: " + hazelcastConfigPath + ", we will just re-purpose the existing instance: " + e.getMessage());
+					
+					// fetch the already running one
+					hazelcastInstance = Hazelcast.getHazelcastInstanceByName(INSTANCE_NAME);
+				}
+				
+		}
 	}
 	
 	/*private class HazelcastInstanceMgr {
