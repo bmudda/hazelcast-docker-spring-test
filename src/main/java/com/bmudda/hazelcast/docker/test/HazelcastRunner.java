@@ -34,7 +34,6 @@ public class HazelcastRunner {
 			Thread.currentThread().setContextClassLoader(HazelcastInstance.class.getClassLoader());
 	//		this.conf =new ClasspathXmlConfig(this.getClass().getClassLoader(), this.hazelcastConfigPath);
 			this.conf = new ClasspathXmlConfig(this.hazelcastConfigPath);
-			//this.conf.setClassLoader();
 			this.conf.setInstanceName(INSTANCE_NAME);
 			
 			this.hazelcastInstance = Hazelcast.newHazelcastInstance(conf);
