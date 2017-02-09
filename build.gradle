@@ -37,15 +37,13 @@ dependencies {
 
     compile group: 'com.hazelcast', name: 'hazelcast', version:'3.7.3'
     
-    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.2.5.RELEASE')
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.2.5.RELEASE'
     
     compile (group: 'org.bitsofinfo', name: 'hazelcast-consul-discovery-spi', version:'1.0-RC6'){
     	exclude(module: 'hazelcast')
     }
     
-    compile (group: 'org.bitsofinfo', name: 'docker-discovery-registrator-consul', version:'1.0-RC1'){
-    	exclude(module: 'hazelcast')
-    }
+    compile group: 'org.bitsofinfo', name: 'docker-discovery-registrator-consul', version:'1.0-RC1'
     
     compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
     
@@ -61,20 +59,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-//create a single Jar with all dependencies
-//task fatJar(type: Jar) {
-//	manifest {
-//        attributes 'Implementation-Title': 'Hazelcast Docker SpringBoot Test',
-//        	'Implementation-Version': 1.0,
-//        	'Main-Class': 'com.bmudda.util.boot.Application'
-//    }
-//    baseName = project.name + '-all'
-//    from {
-//    	configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//  	}
-//    with jar
-//}	
-
 task buildDockerImage(type: DockerBuildImage) {
   
   dependsOn build
@@ -87,10 +71,6 @@ task buildDockerImage(type: DockerBuildImage) {
   }
 
 }
-
-//bootRepackage {
-//    enabled = false
-//}
 
 springBoot {
     mainClass = "com.bmudda.util.boot.Application"
@@ -111,18 +91,6 @@ task buildTagDockerImage(type: DockerTagImage) {
 sourceSets {
     main.java.srcDir "src/main/java"
 }
-
-//jar {
-//  manifest { 
-//    attributes (
-//      "Main-Class": "com.bmudda.util.boot.Application"
-//      )
-//  }  
-//
-//  from {
-//    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//  }
-//}
 
 artifacts {
     archives sourcesJar

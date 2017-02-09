@@ -7,7 +7,7 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <bean id="hazelcastRunner" class="com.bmudda.hazelcast.docker.test.HazelcastRunner">
+  <bean id="hazelcastRunner" class="com.bmudda.hazelcast.docker.test.HazelcastRunner" depends-on="discoveryService">
      <constructor-arg value="springConfigs/hazelcast/hazelcast-docker.xml"/>
   </bean> 
 
